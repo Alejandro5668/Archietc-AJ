@@ -7,8 +7,38 @@ review tiers matched to blast radius, and GitHub Issues/Projects as the
 shared task book. Extracted from a production repo so the same mechanisms
 can be dropped into a new project instead of rebuilt from scratch.
 
-This kit is deliberately thin: a handful of files to copy, a few
-placeholders to fill, no framework to learn.
+## How do I use this repo?
+
+Two steps. That's the whole answer.
+
+1. **Install the assistant once**, on your machine (not per project):
+   ```bash
+   git clone https://github.com/Alejandro5668/Archietc-AJ.git
+   mkdir -p ~/.claude/skills
+   cp -r Archietc-AJ/.claude/skills/aj-architecture-onboard ~/.claude/skills/
+   ```
+2. **In any project — new or existing — open Claude Code there and say:**
+   > "onboard this repo with the AJ architecture"
+
+That's it. Claude fetches whatever else it needs from this repo, checks
+which tools you're missing (asking before installing anything), asks you
+a handful of short questions about your project, and writes the files in
+for you.
+
+**How you'll know it worked:** Claude walks you through a short Q&A, then
+you'll see a new `CLAUDE.md`, a `docs/architecture.md`, and a `.claude/`
+folder with hooks appear in your project. Review the diff and commit it
+yourself — the assistant never commits for you.
+
+**Changed your mind?** Say "uninstall the AJ architecture" and it removes
+itself from your machine, asking for confirmation first. It never touches
+files already written into a project you onboarded earlier.
+
+---
+
+Everything below this line is reference material — what's actually in the
+kit, how to do it by hand instead of via the skill, and why it's built
+this way. You don't need any of it to get started.
 
 ## What's in here
 
@@ -20,52 +50,19 @@ placeholders to fill, no framework to learn.
 | `.claude/hooks/worktree-guard.mjs` | Auto-detects a concurrent session and blocks edits in the shared clone |
 | `.claude/hooks/board-context.mjs` | Surfaces the GitHub Projects board at session start |
 | `.claude/hooks/skill-reminder.mjs` | Reminds project conventions the first time a configured file category is edited |
-| `.claude/skills/aj-architecture-onboard/SKILL.md` | A Claude Code skill that runs this whole bootstrap for you |
+| `.claude/skills/aj-architecture-onboard/SKILL.md` | The skill that runs the whole bootstrap for you |
 | `.claude/skills/aj-architecture-offboard/SKILL.md` | Uninstalls the skill + cached kit from this machine, with confirmation |
 | `.claude/settings.json` | Wires the three hooks above |
 | `scripts/setup-worktree.sh` | Seeds a new worktree with gitignored local state |
 | `scripts/check-branch-overlap.sh` | Checks for file overlap with the remote default branch before pushing |
 
-## Fastest path: install the skill once, globally
+**Note on how the skill shows up:** appearing as an available skill only
+requires that single `SKILL.md` file sitting under `~/.claude/skills/`.
+You don't need the rest of this repo cloned for it to show up — the
+actual kit (`TOOLS.md`, `CLAUDE.md.template`, hooks, scripts) is fetched
+lazily, only when you actually invoke the skill to onboard a project.
 
-Copy `.claude/skills/aj-architecture-onboard/` into your own
-`~/.claude/skills/aj-architecture-onboard/` (once, on your machine — not
-per project):
-
-```bash
-mkdir -p ~/.claude/skills
-cp -r .claude/skills/aj-architecture-onboard ~/.claude/skills/
-```
-
-From then on, in **any** new project — nothing pre-copied, an empty repo
-is fine — open Claude Code there and say:
-
-> "onboard this repo with the AJ architecture"
-
-The skill fetches this kit from GitHub itself (cloning/refreshing a local
-cache), runs the tool checks, asks its Q&A, and writes the final files
-into that project. Nothing to clone or `cp` by hand, ever again. Read
-`.claude/skills/aj-architecture-onboard/SKILL.md` if you want to see
-exactly what it does before trusting it with a real project.
-
-**Note:** appearing as an available skill only requires that single
-`SKILL.md` file sitting under `~/.claude/skills/`. You don't need to have
-cloned this repo for it to show up — the actual kit (`TOOLS.md`,
-`CLAUDE.md.template`, hooks, scripts) is fetched lazily, only when you
-actually invoke the skill to onboard a project (its step 0).
-
-### Changed your mind? Uninstall just as easily
-
-```
-"uninstall the AJ architecture"
-```
-
-`.claude/skills/aj-architecture-offboard/SKILL.md` removes the global
-skill and its cached kit checkout, asking for confirmation first and
-never touching files already written into a project you onboarded
-earlier (those are that project's own, handled via normal git).
-
-## Bootstrap checklist (manual / fallback path)
+## Manual path (only if you'd rather not install the skill)
 
 Use this if you'd rather not install the skill globally, or the skill's
 step 0 can't reach GitHub (no network) and asks you for a local checkout
