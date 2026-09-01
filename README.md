@@ -21,6 +21,7 @@ placeholders to fill, no framework to learn.
 | `.claude/hooks/board-context.mjs` | Surfaces the GitHub Projects board at session start |
 | `.claude/hooks/skill-reminder.mjs` | Reminds project conventions the first time a configured file category is edited |
 | `.claude/skills/aj-architecture-onboard/SKILL.md` | A Claude Code skill that runs this whole bootstrap for you |
+| `.claude/skills/aj-architecture-offboard/SKILL.md` | Uninstalls the skill + cached kit from this machine, with confirmation |
 | `.claude/settings.json` | Wires the three hooks above |
 | `scripts/setup-worktree.sh` | Seeds a new worktree with gitignored local state |
 | `scripts/check-branch-overlap.sh` | Checks for file overlap with the remote default branch before pushing |
@@ -46,6 +47,23 @@ cache), runs the tool checks, asks its Q&A, and writes the final files
 into that project. Nothing to clone or `cp` by hand, ever again. Read
 `.claude/skills/aj-architecture-onboard/SKILL.md` if you want to see
 exactly what it does before trusting it with a real project.
+
+**Note:** appearing as an available skill only requires that single
+`SKILL.md` file sitting under `~/.claude/skills/`. You don't need to have
+cloned this repo for it to show up — the actual kit (`TOOLS.md`,
+`CLAUDE.md.template`, hooks, scripts) is fetched lazily, only when you
+actually invoke the skill to onboard a project (its step 0).
+
+### Changed your mind? Uninstall just as easily
+
+```
+"uninstall the AJ architecture"
+```
+
+`.claude/skills/aj-architecture-offboard/SKILL.md` removes the global
+skill and its cached kit checkout, asking for confirmation first and
+never touching files already written into a project you onboarded
+earlier (those are that project's own, handled via normal git).
 
 ## Bootstrap checklist (manual / fallback path)
 
