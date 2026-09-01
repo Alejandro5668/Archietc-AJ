@@ -20,19 +20,40 @@ placeholders to fill, no framework to learn.
 | `.claude/hooks/worktree-guard.mjs` | Auto-detects a concurrent session and blocks edits in the shared clone |
 | `.claude/hooks/board-context.mjs` | Surfaces the GitHub Projects board at session start |
 | `.claude/hooks/skill-reminder.mjs` | Reminds project conventions the first time a configured file category is edited |
-| `.claude/skills/onboard/SKILL.md` | A Claude Code skill that runs this whole bootstrap for you |
+| `.claude/skills/aj-architecture-onboard/SKILL.md` | A Claude Code skill that runs this whole bootstrap for you |
 | `.claude/settings.json` | Wires the three hooks above |
 | `scripts/setup-worktree.sh` | Seeds a new worktree with gitignored local state |
 | `scripts/check-branch-overlap.sh` | Checks for file overlap with the remote default branch before pushing |
 
-## Bootstrap checklist
+## Fastest path: install the skill once, globally
 
-**Fast path:** copy this kit's `.claude/` folder and root files into your
-new repo, then tell Claude Code something like "onboard this repo with
-this architecture" — the `.claude/skills/onboard/SKILL.md` skill runs the
-steps below for you (tool checks, Q&A, file wiring, gentle-ai/CodeGraph
-init), asking before it installs or overwrites anything. The manual
-steps below are what it does under the hood — still fine to do by hand.
+Copy `.claude/skills/aj-architecture-onboard/` into your own
+`~/.claude/skills/aj-architecture-onboard/` (once, on your machine — not
+per project):
+
+```bash
+mkdir -p ~/.claude/skills
+cp -r .claude/skills/aj-architecture-onboard ~/.claude/skills/
+```
+
+From then on, in **any** new project — nothing pre-copied, an empty repo
+is fine — open Claude Code there and say:
+
+> "onboard this repo with the AJ architecture"
+
+The skill fetches this kit from GitHub itself (cloning/refreshing a local
+cache), runs the tool checks, asks its Q&A, and writes the final files
+into that project. Nothing to clone or `cp` by hand, ever again. Read
+`.claude/skills/aj-architecture-onboard/SKILL.md` if you want to see
+exactly what it does before trusting it with a real project.
+
+## Bootstrap checklist (manual / fallback path)
+
+Use this if you'd rather not install the skill globally, or the skill's
+step 0 can't reach GitHub (no network) and asks you for a local checkout
+instead. Copy this kit's `.claude/` folder and root files into your new
+repo first, then either follow the steps below by hand, or still invoke
+the skill — it detects the files are already there and skips fetching.
 
 1. **Verify/install tooling.** Open `TOOLS.md` and run each row's check
    command. Install anything missing (Claude Code and CodeGraph are

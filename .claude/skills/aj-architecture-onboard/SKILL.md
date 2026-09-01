@@ -1,38 +1,49 @@
 ---
-name: onboard
-description: "Bootstrap this AI-first workflow starter kit (SDD routing, git-worktree isolation, review tiers, GitHub-issues task book) into a new or existing project. Trigger: 'onboard this repo', 'onboard this repo with the AJ architecture', 'set up the AI workflow starter kit', 'adopt the AJ architecture', '/onboard'."
+name: aj-architecture-onboard
+description: "Bootstrap the AJ AI-first workflow starter kit (SDD routing, git-worktree isolation, review tiers, GitHub-issues task book) into a new or existing project, fetching it from GitHub automatically. Trigger: 'onboard this repo', 'onboard this repo with the AJ architecture', 'set up the AI workflow starter kit', 'adopt the AJ architecture', 'bootstrap AJ architecture', '/onboard'."
 license: MIT
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 ## Purpose
 
-One-shot guided bootstrap of this starter kit into the current repo: checks
+One-shot guided bootstrap of the AJ starter kit (github.com/Alejandro5668/Archietc-AJ)
+into the current repo: fetches the kit itself (no manual copy needed), checks
 tooling, fills `CLAUDE.md` placeholders via short Q&A, wires the hooks and
-scripts, and runs gentle-ai/CodeGraph init for this project. Replaces
-following `README.md`'s checklist by hand. This is a procedural runbook —
-execute the numbered steps in order, don't skip the confirmation gates.
+scripts, and runs gentle-ai/CodeGraph init for this project. This is a
+procedural runbook — execute the numbered steps in order, don't skip the
+confirmation gates.
+
+This skill is meant to be installed once, globally (`~/.claude/skills/`), so
+it's available in every project without copying anything into each repo
+first — see step 0.
 
 ## Preconditions
 
 - Run from the root of the target project (the repo being onboarded), git
   initialized.
-- The starter kit's own files (`TOOLS.md`, `CLAUDE.md.template`,
-  `docs/architecture.md`, `.claude/hooks/*.mjs`, `scripts/*.sh`) must be
-  reachable — either already copied into this repo, or in a known
-  starter-kit checkout to copy from.
 
 ## Runbook
 
 ### 0. Locate source files
 
 - Check whether `CLAUDE.md.template` and `TOOLS.md` already exist at this
-  repo's root.
-  - Yes → the starter kit was already copied in; source root = this repo
-    root. Go to step 1.
-  - No → ask the user for the path to their `ai-workflow-starter-kit`
-    checkout. Do not guess a path.
+  repo's root. If yes, the kit was already vendored into this repo — source
+  root = this repo root. Go to step 1.
+- Otherwise, get a copy of the kit automatically, without asking the user
+  to do anything by hand:
+  1. Pick a local cache directory, e.g. `~/.claude/cache/archietc-aj/`.
+  2. If it already exists and is a git repo, refresh it:
+     `git -C <cache-dir> pull --ff-only`.
+  3. If it doesn't exist yet, clone it:
+     `git clone --depth 1 https://github.com/Alejandro5668/Archietc-AJ.git <cache-dir>`.
+  4. Use `<cache-dir>` as the source root for every step below. Treat it as
+     read-only — only ever copy *from* it, never write into it.
+  - If the clone/pull fails (no network, no `git`, repo unreachable): tell
+    the user, then ask for the path to a local `ai-workflow-starter-kit`/
+    `Archietc-AJ` checkout to use as the source root instead. Do not guess a
+    path.
 
 ### 1. Tool check (read `TOOLS.md` for the authoritative table, run its checks)
 
@@ -141,3 +152,5 @@ Report, in this order:
 - Never run `codegraph uninit`, `codegraph install/uninstall`, or
   `codegraph upgrade` — out of scope for onboarding.
 - Keep each Q&A a single batched message, not one question per item.
+- Never write into the cache checkout from step 0 — it's a read-only source
+  to copy from, refreshed via `git pull`, not a working directory.
